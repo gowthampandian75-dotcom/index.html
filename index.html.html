@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    
+    <!-- Link to Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    
+    <!-- Include Canvas Confetti library for the confetti animation -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* --- CSS styles --- */
+        
+        /* Reset basic elements */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Colorful vibrant gradient background */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+            background-size: 200% 200%;
+            animation: gradientMove 10s ease infinite; /* Animates the gradient */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle moving background effect */
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Main container holding content (hidden initially) */
+        .container {
+            display: none; /* Hidden until password is met */
+            text-align: center;
+            padding: 2.5rem 2rem;
+            z-index: 10;
+            max-width: 500px;
+            width: 90%;
+            
+            /* Glassmorphism effect */
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Password overlay container */
+        .password-container {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            z-index: 20;
+            max-width: 400px;
+            width: 90%;
+            
+            /* Glassmorphism effect */
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .password-container h2 {
+            color: #fff;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            text-shadow: 1px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .password-input:focus {
+            border-color: #ff6b6b;
+        }
+
+        .error-msg {
+            color: #d63031;
+            font-size: 0.9rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: none; /* Hidden initially */
+        }
+
+        /* Big animated Happy Birthday title */
+        .title {
+            font-size: 3.5rem;
+            color: #ffffff;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            animation: bounce 2s infinite ease-in-out;
+            line-height: 1.2;
+        }
+
+        /* Float the title up and down gently */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Photo section */
+        .photo-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .photo-wrapper {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+            border-radius: 50%;
+            padding: 6px;
+            background: linear-gradient(45deg, #ff9a9e, #a1c4fd); /* Colorful ring around the photo */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        /* The actual image */
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #fff;
+        }
+
+        .photo-hint {
+            margin-top: 15px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Awesome button styling */
+        .play-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: #fff;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        /* Nice hover effect for the button */
+        .play-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        .play-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Custom Link styling */
+        .custom-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .custom-link:hover {
+            background: #fff;
+            color: #ff6b6b;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255,255,255,0.4);
+        }
+
+        /* Background floating emojis (hidden initially) */
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none; /* Ignore clicks */
+            display: none; /* Hidden until password is met */
+        }
+
+        .shape {
+            position: absolute;
+            bottom: -100px;
+            font-size: 3rem;
+            animation: floatUp infinite linear;
+            opacity: 0.6;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Mobile specific adjustments to make it look great on phones */
+        @media (max-width: 480px) {
+            .title { font-size: 2.8rem; }
+            .photo-wrapper { width: 180px; height: 180px; }
+            .play-btn { padding: 12px 28px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CSS animated floating background balloons, hearts and sparkles -->
+    <div class="floating-shapes">
+        <!-- We use inline styles to randomize position and speed for each emoji -->
+        <div class="shape" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🎈</div>
+        <div class="shape" style="left: 25%; animation-duration: 15s; animation-delay: 3s;">❤️</div>
+        <div class="shape" style="left: 50%; animation-duration: 11s; animation-delay: 1s;">🎁</div>
+        <div class="shape" style="left: 75%; animation-duration: 14s; animation-delay: 5s;">✨</div>
+        <div class="shape" style="left: 85%; animation-duration: 13s; animation-delay: 2s;">🎈</div>
+        <div class="shape" style="left: 15%; animation-duration: 16s; animation-delay: 6s;">🎉</div>
+        <div class="shape" style="left: 65%; animation-duration: 12s; animation-delay: 4s;">❤️</div>
+    </div>
+
+    </div>
+
+    <!-- Password Screen Container -->
+    <div class="password-container" id="password-screen">
+        <h2>Birthday Surprise Lock</h2>
+        <input type="password" id="password-input" class="password-input" placeholder="Enter Password" autocomplete="off">
+        <div class="error-msg" id="error-msg">Incorrect password!</div>
+        <button class="play-btn" id="submit-btn" style="width: 100%;">Unlock Box 🎁</button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container" id="main-content">
+        
+        <h1 class="title">Happy<br>Birthday<br>Anni! ❤️</h1>
+        
+        <!-- The Photo Section -->
+        <div class="photo-section">
+            <div class="photo-wrapper">
+                <!-- User's photo! -->
+                <img src="../Pictures/anni.jpg" alt="Birthday Person" id="user-photo">
+            </div>
+        </div>
+
+        <!-- The Play Song Button -->
+        <button class="play-btn" id="play-btn">🎵 Play Birthday Song</button>
+
+        <!-- A Custom Link -->
+        <div style="margin-top: 25px;">
+            <a href="https://www.google.com" target="_blank" class="custom-link">🎁 Open Your Gift</a>
+        </div>
+        
+        <!-- Hidden Audio Element -->
+        <!-- IMPORTANT: Replace 'birthday-song.mp3' with the path to your actual mp3 file -->
+        <audio id="birthday-audio" src="birthday-song.mp3" preload="auto"></audio>
+        
+    </div>
+
+    <script>
+        /* --- JavaScript Logic --- */
+
+        // Password Protection Logic
+        const correctPassword = "chaos"; // The password required to open
+        
+        const passwordScreen = document.getElementById('password-screen');
+        const mainContent = document.getElementById('main-content');
+        const floatingShapes = document.querySelector('.floating-shapes');
+        const submitBtn = document.getElementById('submit-btn');
+        const passwordInput = document.getElementById('password-input');
+        const errorMsg = document.getElementById('error-msg');
+
+        function checkPassword() {
+            if (passwordInput.value.toLowerCase() === correctPassword) {
+                // Password is correct!
+                passwordScreen.style.display = 'none'; // Hide password box
+                mainContent.style.display = 'block'; // Show birthday box
+                floatingShapes.style.display = 'block'; // Show animations
+
+                // Start Confetti upon Unlock
+                fireConfetti();
+            } else {
+                // Password incorrect
+                errorMsg.style.display = 'block';
+                // Small shake effect for error
+                passwordInput.style.transform = 'translateX(-5px)';
+                setTimeout(() => passwordInput.style.transform = 'translateX(5px)', 100);
+                setTimeout(() => passwordInput.style.transform = 'translateX(0)', 200);
+            }
+        }
+
+        submitBtn.addEventListener('click', checkPassword);
+        
+        // Allow pressing 'Enter' on keyboard to submit password
+        passwordInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+
+        // 1. Play Confetti Animation Function
+        function fireConfetti() {
+            // We'll shoot confetti for 3 seconds
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            // Configuration for the confetti look
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Fire confetti from left side
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+                }));
+                
+                // Fire confetti from right side
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+                }));
+            }, 250);
+        }
+
+
+        // 2. Play Birthday Song Audio Logic
+        const playBtn = document.getElementById('play-btn');
+        const audio = document.getElementById('birthday-audio');
+        let isPlaying = false;
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                // If it's already playing, pause it.
+                audio.pause();
+                playBtn.innerHTML = '🎵 Play Birthday Song';
+                isPlaying = false;
+            } else {
+                // Play the song!
+                audio.play().then(() => {
+                    playBtn.innerHTML = '⏸️ Pause Song';
+                    isPlaying = true;
+                    
+                    // Extra confetti burst when they click 'Play'
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 }
+                    });
+                }).catch(error => {
+                    // This error triggers if the mp3 file is not found
+                    alert("Ops! The birthday-song.mp3 file isn't found. Make sure to place an audio file named 'birthday-song.mp3' in the same folder as this HTML file, or update the audio src link in the code.");
+                    console.error("Audio playback error:", error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
